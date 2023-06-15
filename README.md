@@ -1,7 +1,23 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# **This was built and tested using Node version 20**
+## To run this app **locally** you will need to do the following:
 
+<sub> make sure you have node version 20 installed</sub> 
+
+ 1. "npm i" to install the dependencies
+ 2. " npm start" to start the app (should run at http://localhost:3000/ )
+
+ Notes: 
+ - The app generates random purchase and user data for 30 days and calculates the points
+ - This app makes a call to randome.me to grab mock user data, so it needs to be connected to the internet.
+ - Unit test covers the basic UI components and the points calculator 
+ - If for some reason it doesn't run, there are 2 screenshots in the public folder
+ 
+ 
+
+
+-----
+-----
 ## Available Scripts
 
 In the project directory, you can run:
@@ -44,11 +60,4 @@ Instead, it will copy all the configuration files and the transitive dependencie
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
 
-# **This was built and tested using Node version 20**
-## To run this app locally you will need to do the following:
-
-<sub> make sure you have node version 20 installed</sub> 
-
- 1. "npm i" to install the dependencies
- 2. " npm start" to start the app
 

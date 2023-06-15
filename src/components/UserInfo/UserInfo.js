@@ -33,14 +33,14 @@ export const UserInfo = ({ customer, transactions, totals }) => {
   };
 
   return (
-    <div className={styles.tableContainer}>
+    
       <UserInfo
         key={customer?.login?.uuid}
         customer={customer}
         transactions={transactions}
         totals={totals}
       />
-    </div>
+    
   );
 };
 
@@ -56,7 +56,10 @@ UserInfo.propTypes = {
     }),
   }),
   totalTransactions: PropTypes.arrayOf(PropTypes.object),
-  totals: PropTypes.arrayOf(PropTypes.object),
+  totals: PropTypes.shape({
+    totalSpent: PropTypes.string,
+    totalPoints: PropTypes.string,
+  }),
 };
 
 export default UserInfo;

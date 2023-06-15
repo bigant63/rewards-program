@@ -2,14 +2,12 @@ import { useQuery } from "react-query";
 import dayjs from "dayjs";
 import failoverData from "../__mock__/customers.json";
 const MAX_TRANSACTIONS_PER_DAY = 10;
-export const usdFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
+export const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 
-  export const numFormatter = new Intl.NumberFormat('en-US');
-
-  
+export const numFormatter = new Intl.NumberFormat("en-US");
 
 export const spendingGenerator = (min = 1, max = 100) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -23,8 +21,11 @@ export const getSummaryTotals = (transactions) => {
     totalSpent += totalsPerDay.totalAmount;
     totalPoints += totalsPerDay.totalPoints;
   });
-  
-  return { totalPoints: numFormatter.format(totalPoints), totalSpent: usdFormatter.format(totalSpent) };
+
+  return {
+    totalPoints: numFormatter.format(totalPoints),
+    totalSpent: usdFormatter.format(totalSpent),
+  };
 };
 
 /**
@@ -33,7 +34,7 @@ export const getSummaryTotals = (transactions) => {
  */
 export const generateDates = (months = 3) => {
   let start = dayjs().subtract(months, "month");
-  
+
   const end = dayjs().subtract(1, "day");
   const dates = [];
   while (start.isBefore(end)) {
@@ -55,8 +56,11 @@ export const getTotals = (transactions) => {
     const { amount = 0 } = transaction;
     if (amount > 100) {
       points += (amount - 100) * 2; // A customer receives 2 points for every dollar spent over $100
-    } else if (amount > 50) {
-      points += amount - 50; //  plus 1 point for every dollar spent between $50 and $100 in each transaction.
+    }
+    if (amount > 50) {
+      // only for the first $100?
+      points += amount > 100 ? 50 : amount - 50; //  plus 1 point for every dollar spent between $50 and $100 in each transaction.
+      // as written, this will give 1 point for every dollar spent between 50 and 100, max of 50
     }
     totalAmount += amount;
     totalPoints += points;
@@ -89,10 +93,9 @@ export const useTransactionGenerator = ({
   );
   const { data } = query;
   let customerData = [];
-  
+
   if (data?.results) {
-    
-    customerData =  data?.results?.map((customer) => {
+    customerData = data?.results?.map((customer) => {
       const getTransactionPerDay = () => {
         const transactionsPerDay =
           Math.floor(Math.random() * MAX_TRANSACTIONS_PER_DAY) + 1;
@@ -128,7 +131,7 @@ export const useTransactionGenerator = ({
   return query?.isSuccess
     ? {
         ...query,
-        customers: customerData
+        customers: customerData,
       }
     : {};
 };
