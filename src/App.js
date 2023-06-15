@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Table from "./components/Table/Table";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { useTransactionGenerator } from "./hooks";
 
-function App() {
+/// if the user goes over 100 they get a green icon, 500, yellow, 1000 oranage, higher than 1000 red
+
+const App = () => {
+  const queryClient = new QueryClient();
+
+  const GeneratorWrapper = () => {
+    const query = useTransactionGenerator({
+      customers: 100,
+      months: 3,
+      onError: (error) => {
+        console.error("there was a query", error);
+      },
+    });
+
+    console.log("query", query);
+
+    return (
+      <div className="App">
+        <header className="App-header" />
+        <Table users={[]} />
+      </div>
+    );
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <GeneratorWrapper />
+    </QueryClientProvider>
   );
-}
+};
 
 export default App;
