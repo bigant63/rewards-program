@@ -2,9 +2,29 @@ import { useQuery } from "react-query";
 import dayjs from "dayjs";
 import failoverData from "../__mock__/customers.json";
 const MAX_TRANSACTIONS_PER_DAY = 10;
+const usdFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
 
-export const spendingGenerator = (min = 1, max = 10000) => {
+  const numFormatter = new Intl.NumberFormat('en-US');
+
+  
+
+export const spendingGenerator = (min = 1, max = 100) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+export const getSummaryTotals = (transactions) => {
+  let totalPoints = 0;
+  let totalSpent = 0;
+  transactions.forEach((transaction) => {
+    const { totalsPerDay = {} } = transaction;
+    totalSpent += totalsPerDay.totalAmount;
+    totalPoints += totalsPerDay.totalPoints;
+  });
+  
+  return { totalPoints: numFormatter.format(totalPoints), totalSpent: usdFormatter.format(totalSpent) };
 };
 
 /**
@@ -12,13 +32,13 @@ export const spendingGenerator = (min = 1, max = 10000) => {
  * @param {Number} months - months is not used, but could be used to generate transactions for the past x months
  */
 export const generateDates = (months = 3) => {
-  const start = dayjs().subtract(months, "month");
-  console.log("start", start);
-  const end = dayjs();
+  let start = dayjs().subtract(months, "month");
+  
+  const end = dayjs().subtract(1, "day");
   const dates = [];
   while (start.isBefore(end)) {
     dates.push(start.format("YYYY-MM-DD"));
-    start.add(1, "day");
+    start = start.add(1, "day");
   }
 
   return dates;
@@ -26,7 +46,6 @@ export const generateDates = (months = 3) => {
 
 // we want to generate points per transaction and get totals
 export const getTotals = (transactions) => {
-  let amtSpent = 0;
   let points = 0;
   let totalAmount = 0;
   let totalPoints = 0;
@@ -43,12 +62,14 @@ export const getTotals = (transactions) => {
     totalPoints += points;
   });
 
-  return { amtSpent, points, totalAmount, totalPoints };
+  return { points, totalAmount, totalPoints };
 };
 
 export const useTransactionGenerator = ({
   customers = 500,
-  onError = () => { return failoverData},
+  onError = () => {
+    return failoverData;
+  },
 }) => {
   const query = useQuery(
     ["customers", customers],
@@ -67,27 +88,32 @@ export const useTransactionGenerator = ({
     }
   );
   const { data } = query;
+  let customerData = [];
   
-  let response = {};
   if (data?.results) {
-    const customers = data.results;
+    
+    customerData =  data?.results?.map((customer) => {
+      const getTransactionPerDay = () => {
+        const transactionsPerDay =
+          Math.floor(Math.random() * MAX_TRANSACTIONS_PER_DAY) + 1;
 
+        // use spendingGenerator to generate a random amount
+        return Array.from({ length: transactionsPerDay }, () => ({
+          amount: spendingGenerator(),
+        }));
+      };
 
-    customers.map((customer) => {
-      const transactionsPerDay =
-        Math.floor(Math.random() * MAX_TRANSACTIONS_PER_DAY) + 1;
+      const totalTransactions = generateDates().map((date) => {
+        const transPerDay = getTransactionPerDay();
 
-      // use spendingGenerator to generate a random amount
-      const transactions = Array.from({ length: transactionsPerDay }, () => ({
-        amount: spendingGenerator(),
-      }));
+        return {
+          date,
+          transactions: transPerDay,
+          totalsPerDay: getTotals(transPerDay),
+        };
+      });
 
-      const totalTransactions = generateDates().map((date) => ({
-        date,
-        transactions,
-      }));
-
-      const totals = getTotals(transactions);
+      const totals = getSummaryTotals(totalTransactions);
       const { first, last } = customer.name;
       const customerName = `${first} ${last}`;
 
@@ -102,7 +128,7 @@ export const useTransactionGenerator = ({
   return query?.isSuccess
     ? {
         ...query,
-        customers: response,
+        customers: customerData
       }
     : {};
 };

@@ -1,5 +1,5 @@
 import "./App.css";
-import Table from "./components/Table/Table";
+import UserInfo from "./components/UserInfo/UserInfo";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useTransactionGenerator } from "./hooks";
 
@@ -17,12 +17,12 @@ const App = () => {
       },
     });
 
-    console.log("query", query);
+    const { isLoading, customers } = query;
 
     return (
       <div className="App">
         <header className="App-header" />
-        <Table users={[]} />
+        {!isLoading && customers?.length && <UserInfo users={customers} />}
       </div>
     );
   };
