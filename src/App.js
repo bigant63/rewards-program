@@ -22,7 +22,20 @@ const App = () => {
     return (
       <div className="App">
         <header className="App-header" />
-        {!isLoading && customers?.length && <UserInfo users={customers} />}
+        {!isLoading && customers?.length && 
+        
+        customers.map(({ customer, totalTransactions, totals }, index) => {
+          return (
+            <UserInfo
+              key={customer?.login?.uuid ?? index}
+              customer={customer}
+              transactions={totalTransactions}
+              totals={totals}
+            />
+          );
+        })
+        
+        }
       </div>
     );
   };
