@@ -1,103 +1,136 @@
 import PropTypes from "prop-types";
-import { useEffect } from "react";
 import styles from "./UserInfo.css";
 import Table from "react-bootstrap/Table";
-import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
+import {usdFormatter} from "../../hooks";
 
-// import styles from './Table.css';
 
 export const UserInfo = ({ users = [] }) => {
-  //  const { data = {} } = query;
-  const handleShowDetails = (e) => {
-    e.preventDefault();
-    console.log(
-      "handleShowDetails",
-      e.currentTarget.attributes["data-id"].value
-    );
-  };
-
-  const toggleDetails = (e, id = 0) => {
-    <a href="#" data-id={id} onClick={handleShowDetails}>
-      View Details
-    </a>;
-  };
-
-  const UserInfoTable = ({ totalsPerDay }) => {
+  const UserInfoTable = ({ transactions }) => {
     return (
       <div className="table-container">
-        {totalsPerDay.map(({ date, transactions }) => {
-          return (
-            <tr key={date}>
-              <td>{date}</td>
-              <td>
-                {transactions.map(({ amount }) => {
-                  return <div key={amount}>{amount}</div>;
-                })}
-              </td>
-            </tr>
-          );
-        })}
-
         <Table striped responsive bordered hover>
           <thead>
             <tr>
-              <th>User Info</th>
+              <th>Date</th>
               <th>Total Amount Spent</th>
               <th>Reward Points</th>
             </tr>
           </thead>
           <tbody>
-            {users.map(({ customer, totalTransactions, totals }, index) => {
-              const id = customer?.login?.uuid ?? index;
-
-              return (
-                <div className={styles.userInfoContainer}>
-                  <UserInfo customer={customer} />
-                </div>
-              );
-            })}
+          {transactions.map(({ date, totalsPerDay }) => {
+            
+          return (
+            <tr key={date}>
+              <td>{date}</td>
+              <td>
+                {usdFormatter.format(totalsPerDay.totalAmount)}
+              </td>
+              <td>
+                {totalsPerDay.totalPoints}
+              </td>
+            </tr>
+          );
+        })}
           </tbody>
         </Table>
       </div>
     );
   };
 
-  const UserInfo = ({ customer }) => {
-    const { name, picture, phone, login } = customer;
-    const id = login?.uuid;
+  const UserDetailsList = ({ id, totals }) => {
+    const { totalPoints, totalSpent } = totals;
+
+    const handleShowDetails = (e) => {
+      e.preventDefault();
+      console.log(
+        "handleShowDetails",
+        e.currentTarget.attributes["data-id"].value
+      );
+    };
+
+    return (
+      <>
+      <ul>
+        <li>
+          <span>Total points for the last 3 months:</span> {totalPoints}
+        </li>
+        <li>
+          <span>Total dollars spent for the last 3 months:</span> {totalSpent}
+        </li>
+        <li>
+          <Button
+            data-id={id}
+            onClick={handleShowDetails}
+            size="sm"
+            variant="link"
+          >
+            Show Details
+          </Button>
+        </li>
+      </ul>
+      
+      </>
+    );
+  };
+
+  UserDetailsList.propTypes = {
+    totals: PropTypes.shape({
+      totalPoints: PropTypes.string,
+      totalSpent: PropTypes.string,
+    }),
+  };
+
+  const UserInfo = ({ customer, totals, transactions }) => {
+    const { name, picture, phone } = customer;
+
     return (
       <div className="user-info">
+        <div className="user-info-summary">
         {picture.medium && <img src={picture.medium} alt={name} />}
-        <ul>
-          <li>
-            <span>Name:</span> {name}
-          </li>
-          <li>
-            <span>Phone:</span> {phone}
-          </li>
-          <li>
-          <Button data-id={id} onClick={handleShowDetails} size="sm" variant="link">
-          Show Details
-        </Button>
-          </li>
-        </ul>
-        
+        <div className="user-details-container">
+          <ul>
+            <li>
+              <span>Name:</span> {name}
+            </li>
+            <li>
+              <span>Phone:</span> {phone}
+            </li>
+          </ul>
+          <UserDetailsList totals={totals} />
+        </div>
+        </div>
+        <UserInfoTable transactions={transactions} />
       </div>
     );
   };
 
-  /**
-   * Handles the submit form
-   * @param {Object} stepData - reviewers and step description from modal
-   */
+  UserInfo.propTypes = {
+    customer: PropTypes.shape({
+      name: PropTypes.string,
+      phone: PropTypes.string,
+      login: PropTypes.shape({
+        uuid: PropTypes.string,
+      }),
+      picture: PropTypes.shape({
+        medium: PropTypes.string,
+      }),
+    }),
+  };
 
   return (
     <div className={styles.tableContainer}>
       {users.map(({ customer, totalTransactions, totals }, index) => {
-        return <UserInfo customer={customer} />;
+        
+        return (
+          <UserInfo
+            key={customer?.login?.uuid}
+            customer={customer}
+            transactions={totalTransactions}
+            totals={totals}
+          />
+        );
       })}
-      ]
     </div>
   );
 };

@@ -2,12 +2,12 @@ import { useQuery } from "react-query";
 import dayjs from "dayjs";
 import failoverData from "../__mock__/customers.json";
 const MAX_TRANSACTIONS_PER_DAY = 10;
-const usdFormatter = new Intl.NumberFormat('en-US', {
+export const usdFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
   });
 
-  const numFormatter = new Intl.NumberFormat('en-US');
+  export const numFormatter = new Intl.NumberFormat('en-US');
 
   
 
