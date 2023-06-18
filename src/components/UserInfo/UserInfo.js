@@ -1,16 +1,17 @@
 import PropTypes from "prop-types";
 import styles from "./UserInfo.css";
- import UserDetailsList from "../UserDetailsList/UserDetailsList";
- import UserInfoTable from "../UserInfoTable/UserInfoTable";
+import UserDetailsList from "../UserDetailsList/UserDetailsList";
+import UserInfoTable from "../UserInfoTable/UserInfoTable";
 import { useState } from "react";
 
 export const UserInfo = ({ customer, transactions, totals }) => {
-  
   const UserInfo = ({ customer, totals, transactions }) => {
     const { name, picture, phone } = customer;
     const [showTransactions, setShowTransactions] = useState(false);
-   const handleShowDetails = () => { setShowTransactions(!showTransactions); };
-
+    const handleShowDetails = () => {
+      setShowTransactions(!showTransactions);
+    };
+    
     return (
       <div className="user-info">
         <div className="user-info-summary">
@@ -24,23 +25,26 @@ export const UserInfo = ({ customer, transactions, totals }) => {
                 <span>Phone:</span> {phone}
               </li>
             </ul>
-            {<UserDetailsList onShowDetails={handleShowDetails} totals={totals} /> }
+            {
+              <UserDetailsList
+                onShowDetails={handleShowDetails}
+                totals={totals}
+              />
+            }
           </div>
         </div>
-        {showTransactions && <UserInfoTable transactions={transactions} /> }
+        {showTransactions && <UserInfoTable transactions={transactions} />}
       </div>
     );
   };
 
   return (
-    
-      <UserInfo
-        key={customer?.login?.uuid}
-        customer={customer}
-        transactions={transactions}
-        totals={totals}
-      />
-    
+    <UserInfo
+      key={customer?.login?.uuid}
+      customer={customer}
+      transactions={transactions}
+      totals={totals}
+    />
   );
 };
 

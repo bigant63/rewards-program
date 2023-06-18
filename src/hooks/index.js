@@ -59,14 +59,14 @@ export const getTotals = (transactions) => {
     }
     if (amount > 50) {
       // only for the first $100?
-      points += amount > 100 ? 50 : amount - 50; //  plus 1 point for every dollar spent between $50 and $100 in each transaction.
+      points += amount >= 100 ? 50 : amount - 50; //  plus 1 point for every dollar spent between $50 and $100 in each transaction.
       // as written, this will give 1 point for every dollar spent between 50 and 100, max of 50
     }
     totalAmount += amount;
-    totalPoints += points;
+    totalPoints = points;
   });
 
-  return { points, totalAmount, totalPoints };
+  return { totalAmount, totalPoints };
 };
 
 export const useTransactionGenerator = ({
@@ -108,7 +108,7 @@ export const useTransactionGenerator = ({
 
       const totalTransactions = generateDates().map((date) => {
         const transPerDay = getTransactionPerDay();
-
+  
         return {
           date,
           transactions: transPerDay,
@@ -119,7 +119,7 @@ export const useTransactionGenerator = ({
       const totals = getSummaryTotals(totalTransactions);
       const { first, last } = customer.name;
       const customerName = `${first} ${last}`;
-
+      
       return {
         totals,
         totalTransactions,
