@@ -38,7 +38,7 @@ it('should call toggle when button is clicked and show details', async () => {
   fireEvent.click(showDetailsButton);
   
   await waitFor(() => {
-    expect(screen.getByText('Total Amount Spent')).toBeInTheDocument();
+    expect(screen.getByText('Total Amount Spent Per Day')).toBeInTheDocument();
   });
 
   expect(screen.getByText('Reward Points')).toBeInTheDocument();

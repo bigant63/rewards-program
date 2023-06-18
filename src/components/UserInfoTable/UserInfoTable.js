@@ -12,7 +12,7 @@ const UserInfoTable = ({ transactions }) => {
         <thead>
           <tr>
             <th>Date</th>
-            <th>Total Amount Spent</th>
+            <th>Total Amount Spent Per Day</th>
             <th>Reward Points</th>
           </tr>
         </thead>
