@@ -22,7 +22,7 @@ const localProps = {
 const component = (props = localProps) => render(<UserInfo {...props} />)
     
 it('should render', () => {
-  component({ ...localProps, reviewers: [] });
+  component({ ...localProps });
   expect(screen.getByText('John Doe')).toBeInTheDocument();
   expect(screen.getByText('123-456-7890')).toBeInTheDocument();  
   expect(screen.getByAltText('John Doe')).toHaveAttribute('src', 'http://example.com');
@@ -32,7 +32,7 @@ it('should render', () => {
 
 
 it('should call toggle when button is clicked and show details', async () => {
-  component({ ...localProps, reviewers: [] });
+  component({ ...localProps });
   const showDetailsButton = screen.getByRole('button', { name: 'Show/Hide Details' });
   expect(showDetailsButton).toBeInTheDocument();
   fireEvent.click(showDetailsButton);
